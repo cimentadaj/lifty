@@ -1,0 +1,29 @@
+After running the app and opening the website, I now get an error. Here's the traceback in the webiste:
+
+Using the URLconf defined in lifty.urls, Django tried these URL patterns, in this order:
+
+    admin/
+    users/
+    experiments/
+    experiments/ [name='experiment_list']
+    ^media/(?P<path>.*)$
+
+The empty path didn’t match any of these.
+
+Please revise all attached files and understand why this is happening. Here's the output of the shell:
+
+jorge@jorge-Apollo:~/test/lifty_app/lifty$ python3 manage.py runserver
+python3 manage.py runserver
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+October 31, 2023 - 16:24:11
+Django version 4.2.6, using settings 'lifty.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Not Found: /
+[31/Oct/2023 16:24:14] "GET / HTTP/1.1" 404 2585
+
+Make the necessary changes so this works. It needs to work this time, my life depends on this.

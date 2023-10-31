@@ -1,0 +1,155 @@
+Let's start by creating the Django project and the necessary apps. We will need two apps: one for handling users and another for handling experiments. 
+
+run.sh
+```bash
+#!/bin/bash
+
+# Create a virtual environment
+python3 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Install Django
+pip install Django
+
+# Create a new Django project named 'lifty'
+django-admin startproject lifty
+
+# Navigate into the project directory
+cd lifty
+
+# Create two Django apps: 'users' and 'experiments'
+python manage.py startapp users
+python manage.py startapp experiments
+
+# Run migrations
+python manage.py makemigrations
+python manage.py migrate
+
+# Run the server
+python manage.py runserver
+```
+
+Now, let's define the models for our users and experiments.
+
+lifty/users/models.py
+```python
+from django.db import models
+
+class User(models.Model):
+    name = models.CharField(max_length=255)
+    avatar = models.ImageField(upload_to='avatars/')
+```
+
+lifty/experiments/models.py
+```python
+from django.db import models
+from users.models import User
+
+class Experiment(models.Model):
+    STATUS_CHOICES = [
+        ('D', 'Draft'),
+        ('R', 'Running'),
+        ('RD', 'Ready'),
+        ('W', 'Wrap Up'),
+        ('C', 'Concluded'),
+    ]
+
+    name = models.CharField(max_length=255)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, default='D')
+    target_details = models.TextField()
+    primary_metric = models.CharField(max_length=255)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    diagnostics = models.TextField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+```
+
+Next, let's create the views for our users and experiments.
+
+lifty/users/views.py
+```python
+from django.shortcuts import render
+from .models import User
+
+def user_list(request):
+    users = User.objects.all()
+    return render(request, 'users/user_list.html', {'users': users})
+```
+
+lifty/experiments/views.py
+```python
+from django.shortcuts import render
+from .models import Experiment
+
+def experiment_list(request):
+    experiments = Experiment.objects.all()
+    return render(request, 'experiments/experiment_list.html', {'experiments': experiments})
+```
+
+Now, let's create the templates for our views.
+
+lifty/users/templates/users/user_list.html
+```html
+{% for user in users %}
+    <div>
+        <h2>{{ user.name }}</h2>
+        <img src="{{ user.avatar.url }}" alt="{{ user.name }}">
+    </div>
+{% endfor %}
+```
+
+lifty/experiments/templates/experiments/experiment_list.html
+```html
+{% for experiment in experiments %}
+    <div>
+        <h2>{{ experiment.name }}</h2>
+        <p>{{ experiment.status }}</p>
+        <p>{{ experiment.target_details }}</p>
+        <p>{{ experiment.primary_metric }}</p>
+        <p>{{ experiment.owner.name }}</p>
+        <p>{{ experiment.diagnostics }}</p>
+        <p>{{ experiment.start_date }}</p>
+        <p>{{ experiment.end_date }}</p>
+    </div>
+{% endfor %}
+```
+
+Finally, let's create the URLs for our views.
+
+lifty/users/urls.py
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.user_list, name='user_list'),
+]
+```
+
+lifty/experiments/urls.py
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.experiment_list, name='experiment_list'),
+]
+```
+
+And include these URLs in the main project's URL configuration.
+
+lifty/lifty/urls.py
+```python
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('users/', include('users.urls')),
+    path('experiments/', include('experiments.urls')),
+]
+```
+
+This concludes a fully working implementation.

@@ -1,0 +1,14 @@
+{% for experiment in experiments %}
+<div>
+    <h2>{{ experiment.name }}</h2>
+    <p>Status: {{ experiment.status }}</p>
+    <p>Target Details: {{ experiment.target_details }}</p>
+    <p>Primary Metric: {{ experiment.primary_metric }}</p>
+    <p>Owner: {{ experiment.owner.username }}</p>
+    <p>Diagnostics: {{ experiment.diagnostics }}</p>
+    <p>Start Date: {{ experiment.start_date }}</p>
+    <p>End Date: {{ experiment.end_date }}</p>
+</div>
+{% empty %}
+<p>No experiments available.</p>
+{% endfor %}

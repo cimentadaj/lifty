@@ -1,0 +1,12 @@
+{% for user in users %}
+<div>
+    <h2>{{ user.username }}</h2>
+    {% if user.avatar %}
+    <img src="{{ user.avatar.url }}" alt="{{ user.username }}">
+    {% else %}
+    <p>No avatar available.</p>
+    {% endif %}
+</div>
+{% empty %}
+<p>No users available.</p>
+{% endfor %}
